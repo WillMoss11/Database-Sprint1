@@ -10,7 +10,7 @@ const pool = new Pool({
 });
 
 /**
- * Creates the database tables, if they do not already exist.
+ * Creates the database tables.
  */
 async function createTable() {
   const createMoviesTable = `
