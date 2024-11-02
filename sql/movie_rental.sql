@@ -1,5 +1,5 @@
 -- ===================
--- Database Schema
+-- Database Tables
 -- ===================
 CREATE TABLE Movies (
     movie_id SERIAL PRIMARY KEY,
