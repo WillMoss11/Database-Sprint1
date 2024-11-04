@@ -1,6 +1,11 @@
 -- ===================
 -- Database Tables
 -- ===================
+
+DROP TABLE IF EXISTS Rentals;
+DROP TABLE IF EXISTS Customers;
+DROP TABLE IF EXISTS Movies;
+
 CREATE TABLE Movies (
     movie_id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,

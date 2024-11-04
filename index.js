@@ -1,4 +1,6 @@
 const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
 
 // PostgreSQL connection
 const pool = new Pool({
@@ -8,6 +10,12 @@ const pool = new Pool({
   password: 'postgres', // Your database password
   port: 5432,
 });
+
+// Function to execute SQL file
+async function executeSQLFile(filePath) {
+  const sql = fs.readFileSync(filePath, 'utf8');
+  await pool.query(sql);
+}
 
 /**
  * Creates the database tables.
@@ -125,7 +133,7 @@ async function removeCustomer(customerId) {
  */
 function printHelp() {
   console.log("Movie Rentals");
-  console.log("------------------------");
+  console.log("-----------------------------");
   console.log('Usage:');
   console.log('  insert <title> <year> <genre> <director> - Insert a movie');
   console.log('  show - Show all movies');
@@ -138,6 +146,9 @@ function printHelp() {
  */
 async function runCLI() {
   await createTable();
+  
+  // Execute SQL file after creating the tables
+  await executeSQLFile(path.join(__dirname, 'sql', 'movie_rental.sql'));
 
   const args = process.argv.slice(2);
   switch (args[0]) {
