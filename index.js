@@ -5,7 +5,7 @@ const pool = new Pool({
   user: 'postgres', // Your username
   host: 'localhost',
   database: 'movie_rental', // Change to your database name
-  password: 'your_database_password', // Your database password
+  password: 'postgres', // Your database password
   port: 5432,
 });
 
@@ -50,63 +50,78 @@ async function createTable() {
 
 /**
  * Inserts a new movie into the Movies table.
- * 
- * @param {string} title Title of the movie
- * @param {number} year Year the movie was released
- * @param {string} genre Genre of the movie
- * @param {string} director Director of the movie
  */
 async function insertMovie(title, year, genre, director) {
-  const insertQuery = `
-    INSERT INTO Movies (title, release_year, genre, director)
-    VALUES ($1, $2, $3, $4) RETURNING movie_id;
-  `;
-  const res = await pool.query(insertQuery, [title, year, genre, director]);
-  console.log(`Inserted movie with ID: ${res.rows[0].movie_id}`);
+  try {
+    const insertQuery = `
+      INSERT INTO Movies (title, release_year, genre, director)
+      VALUES ($1, $2, $3, $4) RETURNING movie_id;
+    `;
+    const res = await pool.query(insertQuery, [title, year, genre, director]);
+    console.log(`Inserted movie with ID: ${res.rows[0].movie_id}`);
+  } catch (error) {
+    console.error('Error inserting movie:', error);
+  }
 }
 
 /**
- * Prints all movies in the database to the console
+ * Prints all movies in the database to the console.
  */
 async function displayMovies() {
-  const result = await pool.query('SELECT * FROM Movies;');
-  result.rows.forEach(movie => {
-    console.log(`ID: ${movie.movie_id}, Title: ${movie.title}, Year: ${movie.release_year}, Genre: ${movie.genre}, Director: ${movie.director}`);
-  });
+  try {
+    const result = await pool.query('SELECT * FROM Movies;');
+    if (result.rows.length === 0) {
+      console.log('No movies found.');
+    } else {
+      result.rows.forEach(movie => {
+        console.log(`ID: ${movie.movie_id}, Title: ${movie.title}, Year: ${movie.release_year}, Genre: ${movie.genre}, Director: ${movie.director}`);
+      });
+    }
+  } catch (error) {
+    console.error('Error retrieving movies:', error);
+  }
 }
 
 /**
  * Updates a customer's email address.
- * 
- * @param {number} customerId ID of the customer
- * @param {string} newEmail New email address of the customer
  */
 async function updateCustomerEmail(customerId, newEmail) {
-  const updateQuery = `
-    UPDATE Customers
-    SET email = $1
-    WHERE customer_id = $2;
-  `;
-  await pool.query(updateQuery, [newEmail, customerId]);
-  console.log(`Updated customer ${customerId}'s email to ${newEmail}`);
-};
+  try {
+    const updateQuery = `
+      UPDATE Customers
+      SET email = $1
+      WHERE customer_id = $2;
+    `;
+    const res = await pool.query(updateQuery, [newEmail, customerId]);
+    if (res.rowCount > 0) {
+      console.log(`Updated customer ${customerId}'s email to ${newEmail}`);
+    } else {
+      console.log(`Customer with ID ${customerId} not found.`);
+    }
+  } catch (error) {
+    console.error('Error updating customer email:', error);
+  }
+}
 
 /**
  * Removes a customer from the database along with their rental history.
- * 
- * @param {number} customerId ID of the customer to remove
  */
 async function removeCustomer(customerId) {
-  const deleteQuery = `
-    DELETE FROM Rentals WHERE customer_id = $1;
-    DELETE FROM Customers WHERE customer_id = $1;
-  `;
-  await pool.query(deleteQuery, [customerId]);
-  console.log(`Removed customer with ID: ${customerId}`);
-};
+  try {
+    await pool.query('DELETE FROM Rentals WHERE customer_id = $1;', [customerId]);
+    const res = await pool.query('DELETE FROM Customers WHERE customer_id = $1;', [customerId]);
+    if (res.rowCount > 0) {
+      console.log(`Removed customer with ID: ${customerId}`);
+    } else {
+      console.log(`Customer with ID ${customerId} not found.`);
+    }
+  } catch (error) {
+    console.error('Error removing customer:', error);
+  }
+}
 
 /**
- * Prints a help message to the console
+ * Prints a help message to the console.
  */
 function printHelp() {
   console.log('Usage:');
@@ -117,7 +132,7 @@ function printHelp() {
 }
 
 /**
- * Runs our CLI app to manage the movie rentals database
+ * Runs our CLI app to manage the movie rentals database.
  */
 async function runCLI() {
   await createTable();
@@ -152,7 +167,7 @@ async function runCLI() {
       printHelp();
       break;
   }
-};
+}
 
 runCLI().catch(err => {
   console.error('Error running CLI:', err);
