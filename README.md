@@ -93,3 +93,41 @@ node index.js
 ## Notes
 - Make sure your PostgreSQL server is running and that you have created a database for the application to connect to.
 - Modify the database connection details in the code to match your PostgreSQL setup.
+
+
+
+# Database Normalization: 3NF Explanation
+
+This document outlines how the tables in the Movie Rental System database are designed to meet the criteria for Third Normal Form (3NF), which is essential for minimizing redundancy and ensuring data integrity.
+
+### 1. Movies Table
+- **Primary Key**: `movie_id`
+  - Uniquely identifies each movie in the table.
+- **Attributes**:
+  - `title`: The title of the movie.
+  - `release_year`: The year the movie was released.
+  - `genre`: The genre of the movie.
+  - `director`: The director of the movie.
+  
+All attributes are fully functionally dependent on the `movie_id`, and there are no transitive dependencies, ensuring compliance with 3NF.
+
+### 2. Customers Table
+- **Primary Key**: `customer_id`
+  - Uniquely identifies each customer.
+- **Attributes**:
+  - `first_name`: The first name of the customer.
+  - `last_name`: The last name of the customer.
+  - `email`: The email address of the customer (unique).
+  - `phone_number`: The customer's phone number.
+
+Each attribute is dependent on the `customer_id`, and the uniqueness of the email ensures that no two customers share the same email address, further maintaining data integrity.
+
+### 3. Rentals Table
+- **Primary Key**: `rental_id`
+  - Uniquely identifies each rental record.
+- **Foreign Keys**:
+  - `customer_id`: References the `Customers` table.
+  - `movie_id`: References the `Movies` table.
+
+These foreign keys establish a many-to-one relationship, allowing multiple rentals to be associated with a single customer or movie. The attributes `rental_date` and `return_date` are directly related to the rental record and do not depend on other attributes, adhering to 3NF principles.
+
