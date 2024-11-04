@@ -124,6 +124,8 @@ async function removeCustomer(customerId) {
  * Prints a help message to the console.
  */
 function printHelp() {
+  console.log("Movie Rentals");
+  console.log("------------------------");
   console.log('Usage:');
   console.log('  insert <title> <year> <genre> <director> - Insert a movie');
   console.log('  show - Show all movies');
