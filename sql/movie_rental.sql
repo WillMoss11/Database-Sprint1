@@ -48,16 +48,16 @@ INSERT INTO Customers (first_name, last_name, email, phone_number) VALUES
 ('Charlie', 'Davis', 'charlie@example.com', '444-9876');
 
 INSERT INTO Rentals (customer_id, movie_id, rental_date, return_date) VALUES
-(1, 1, '2023-10-01', '2023-10-05'),
-(1, 2, '2023-10-03', '2023-10-10'),
-(2, 3, '2023-10-02', '2023-10-08'),
-(3, 4, '2023-10-04', '2023-10-12'),
-(4, 1, '2023-10-05', '2023-10-15'),
-(5, 5, '2023-10-06', '2023-10-11'),
-(2, 1, '2023-10-07', '2023-10-14'),
-(3, 2, '2023-10-08', '2023-10-13'),
-(1, 3, '2023-10-09', '2023-10-16'),
-(4, 5, '2023-10-10', '2023-10-20');
+(1, 1, '2024-10-23', '2024-11-06'),
+(1, 2, '2024-10-24', '2024-11-07'),
+(2, 3, '2024-10-25', '2024-11-08'),
+(3, 4, '2024-10-26', '2024-11-09'),
+(4, 1, '2024-10-27', '2024-11-10'),
+(5, 5, '2024-10-28', '2024-11-11'),
+(2, 1, '2024-10-29', '2024-11-12'),
+(3, 2, '2024-10-30', 'NULL'),
+(1, 3, '2024-10-31', 'NULL'),
+(4, 5, '2024-11-1', 'NULL');
 
 -- ===================
 -- Queries
@@ -91,8 +91,8 @@ JOIN Customers c ON r.customer_id = c.customer_id
 WHERE m.director = 'Christopher Nolan';
 
 -- 5. List all currently rented out movies (movies whose return dates haven't been met).
-SELECT m.title, c.first_name, c.last_name
-FROM Movies m
-JOIN Rentals r ON m.movie_id = r.movie_id
+SELECT m.title, r.rental_date, c.first_name, c.last_name
+FROM Rentals r
+JOIN Movies m ON r.movie_id = m.movie_id
 JOIN Customers c ON r.customer_id = c.customer_id
-WHERE r.return_date > NOW();
+WHERE r.return_date IS NULL;
